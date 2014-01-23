@@ -21,7 +21,7 @@ jQuery(ready);
 
 function ready(){
 
-	console.log( 'ready 2' );
+	// console.log( 'ready 2' );
 
 	jQuery('#send-button').on('click', function(evt){
 
@@ -31,6 +31,8 @@ function ready(){
 		var publisher = $header.find('span').text();
 		var title = jQuery('#view-comments > header h1').text();
 		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
+
+		show("SENDING");
 
 		// jx
 		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json', 
@@ -58,21 +60,38 @@ function ready(){
 				
 				console.log( 'mail sent: ', b );
 
-				var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>SENT</h1>";
-				jQueryelem = jQuery(str);
-				jQuery('body').append(jQueryelem);
+				// var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>SENT</h1>";
+				// jQueryelem = jQuery(str);
+				// jQuery('body').append(jQueryelem);
 
-				setTimeout( function(){
-					// console.log( 'remove jQueryelem' );
-					jQueryelem.remove();
-				}, 1000*3)
-
+				// setTimeout( function(){
+				// 	// console.log( 'remove jQueryelem' );
+				// 	jQueryelem.remove();
+				// }, 1000*3)
+				show("SENT");
 			}.bind(this),
 			
 			error:function( xhr, status, errText ){
 				console.log( 'mail sent failed: ', xhr.responseText );
 			}
 		})
+		
+		var jQueryelem;
+		
+		function show( msg ){
+			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>{MSG}</h1>";
+			
+			if( jQueryelem )
+				jQueryelem.remove();
+			
+			jQueryelem = jQuery(str.replace('{MSG}', msg));
+			jQuery('body').append(jQueryelem);
+
+			setTimeout( function(){
+				// console.log( 'remove jQueryelem' );
+				jQueryelem.remove();
+			}, 1000*3)
+		}
 
 		// console.log( 'email sent > ', jQuery('#text').find('h1').text() );
 
