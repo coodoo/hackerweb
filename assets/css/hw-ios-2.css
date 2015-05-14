@@ -1099,8 +1099,8 @@ ol.grouped-tableview-links li>a.tappable-active{
 		transition: -webkit-transform 350ms;
 	}
 	#view-about.hidden{
-		-webkit-transform: translateY(175%);
-		transform: translateY(190%);/* jx: desktop 版時，about 面板要藏低一點*/
+		-webkit-transform: translateY(250%);
+		transform: translateY(250%);/* jx: desktop 版時，about 面板要藏低一點*/
 	}
 	#view-about>.scroll>section{
 		padding: 0 28px;
