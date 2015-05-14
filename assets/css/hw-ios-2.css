@@ -472,7 +472,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 	padding: 0;
 }
 .view .post-content header h1{
-	font-size: 17px;
+	font-size: 1em;
 	font-weight: normal;
 	font: -apple-system-body;
 	line-height: 1.2em;
