@@ -255,7 +255,7 @@ i.icon-loading{
 .tableview-links li>a{
 	display: -webkit-flex;
 	display: flex;
-	font-size: 17px;
+	font-size: 1.1em;
 	font: -apple-system-body;
 	line-height: 1.2em;
 	color: #000;
@@ -282,7 +282,7 @@ i.icon-loading{
 }
 .tableview-links li>a .metadata{
 	margin-top: 1px;
-	font-size: 13px;
+	font-size: 0.8em;
 	font: -apple-system-footnote;
 	line-height: 1.2em;
 	display: block;
