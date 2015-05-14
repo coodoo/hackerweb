@@ -545,7 +545,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 
 .view section.comments{
 	background-color: #fff;
-	font-size: 13px;
+	font-size: 1em;
 	font: -apple-system-footnote;
 	line-height: 1.4em;
 	background-image: -webkit-linear-gradient(top, #c8c7cc, #c8c7cc 50%, transparent 50%), -webkit-linear-gradient(bottom, #c8c7cc, #c8c7cc 50%, transparent 50%);
