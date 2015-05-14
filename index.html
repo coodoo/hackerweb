@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
+<html >
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -18,6 +18,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/touch-icon-72.png">
 <link rel="apple-touch-icon-precomposed" href="icons/touch-icon-114.png">
 <style>body{ visibility: hidden; }</style>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
 // WP8 Viewport fix: http://trentwalton.com/2013/01/16/windows-phone-8-viewport-fix/
 if (navigator.userAgent.match(/IEMobile\/10\.0/)){
@@ -27,69 +28,124 @@ if (navigator.userAgent.match(/IEMobile\/10\.0/)){
 }
 </script>
 <script>
-var RavenConfig = { dsn: 'https://ba1fa9e133f64714b762e2d8d46a0c63@app.getsentry.com/6152' };
 
-if (location.hostname == 'cheeaun.github.io' || location.hostname == 'cheeaun.github.com' || location.hostname == 'app.hackerwebapp.com'){
+jQuery(ready);
 
-	var ra = document.createElement('script');
-	ra.type = 'text/javascript'; ra.async = true;
-	ra.src = '//cdn.ravenjs.com/1.1.0/native/raven.min.js';
-	var s0 = document.getElementsByTagName('script')[0];
-	s0.parentNode.insertBefore(ra, s0);
+function ready(){
+	var btnId;
+	var mo = new MutationObserver(function( record ){
+		clearTimeout( btnId );
+		// console.log('MO CHNAGE = ', record )
+		btnId = setTimeout( addSendButton, 500 );
+	});
+	
+	var config = { attributes: true, childList: true, characterData: true };
+	mo.observe( jQuery('#view-comments .scroll section')[0], config );
 
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-	ga('create', 'UA-36575624-2', 'auto');
-	ga('send', 'pageview');
+	var $btnSend;
+	
+	// setTimeout(function(){
+	// 	addSendButton();
+	// }.bind(this), 500)
+	
+	function addSendButton(){
+		// if( window.innerWidth < 640 ) return;
+		
+		var str = '<div style="top:60px;"  class="header-button header-button-right send-button"><button style="width:80px;">SEND</button></div>';
+		
+		if( !$btnSend)
+			$btnSend = jQuery(str);
 
-	// Track device pixel ratios
-	if (window.devicePixelRatio) ga('set', 'dimension1', window.devicePixelRatio);
-}
+		var $header = jQuery('#view-comments .scroll section .post-content header');
+		$btnSend.appendTo( $header );
+		$btnSend.css('top', $header.find('p').offset().top + 14 );
 
-if (window.applicationCache){
-	// "Naturally" reload when an update is available
-	var reload = false;
-	window.applicationCache.addEventListener('updateready', function(){
-		if (window.applicationCache.status == window.applicationCache.UPDATEREADY){
-			window.applicationCache.swapCache();
-			reload = true;
+		// phone 版
+		if( window.innerWidth < 640 ){
+			$btnSend.css('top', 60 );
 		}
-	}, false);
 
-	setInterval(function(){
-		try { // There's nothing to update for first-time load, browser freaks out :/
-			window.applicationCache.update();
-		} catch (e){}
-	}, 1000*60*60); // Every hour
+		var $header2 = jQuery('#view-comments > header');
+		// console.log( '$header2 有貨?', $header2.length );
+		jQuery(str).css('top', 0).appendTo( $header2 );
+		// $btnSend.css('top', $header.find('p').offset().top + 20 );
 
-	var checkReload = function(){
-		if (reload) location.reload();
-	};
-	window.addEventListener('pageshow', checkReload, false);
-	window.addEventListener('focus', checkReload, false);
 
-	// Use GA to track the update rate of this manifest appcache thing
-	// and see how fast users are updated to the latest cache/version
-	if (typeof ga != 'undefined') window.addEventListener('load', function(){
-		setTimeout(function(){
-			var r = new XMLHttpRequest();
-			r.open('GET', 'manifest.appcache', true);
-			r.onload = function(){
-				var text = this.responseText;
-				if (!text) return;
-				var version = (text.match(/#\s\d[^\n\r]+/) || [])[0];
-				if (version) ga('send', 'event', 'Appcache', 'Version', version.replace(/^#\s/, ''));
-			};
-			r.send();
-		}, 1000);
-	}, false);
-} else {
-	setTimeout(function(){
-		if (typeof ga != 'undefined') ga('send', 'event', 'Appcache', 'Version', 'n/a');
-	}, 1000);
+	}
+	jQuery('#view-comments').on( 'click', 'li', function(evt){
+		
+		if( evt.target.nodeName === "BUTTON" ) return;
+		evt.stopImmediatePropagation();
+		
+		// console.log( 'li click', evt );
+		var $elem = jQuery(evt.currentTarget.children[0]);
+		var style = 'background-color:rgba(243, 192, 35, 0.4);';
+		// var style = 'border: 1px dashed blue;';
+		var s = $elem.attr('style');
+		$elem.attr('style', (s == undefined || s == "") ? style : "");
+	})
+	// 寄信
+	jQuery('#view-comments').on('click', function(evt){
+
+		if( evt.target.parentElement.classList.contains('send-button') == false )
+			return;
+
+		evt.preventDefault();
+		var $header = jQuery(jQuery('.post-content header a')[0]);
+		var publisher = $header.find('span').text();
+		var title = jQuery('#view-comments > header h1').text();
+		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
+		show("SENDING");
+		// jx
+		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json', 
+		{
+			type:"POST", 
+			data:{
+	    	    "key": "fEgERIi_5Cb5YgnAh4pl0g",
+	    	    "message": {
+	    	        "html": content,
+	    	        "subject": title + '(' + publisher + ')',
+	    	        "from_email": "from_hackernews@twmug.com",
+	    	        "from_name": "from_hackernews",
+	    	        "to": [
+	    	            {
+	    	                "email": "jx@twmug.com",
+	    	                "type": "to"
+	    	            }
+	    	        ]
+	    	    },
+	    	    "async": false,
+	    	    "ip_pool": "Main Pool"
+	    	}, 
+			success:function(a,b,c){
+				
+				// console.log( 'mail sent: ', b );
+				show("SENT");
+			}.bind(this),
+			
+			error:function( xhr, status, errText ){
+				// console.log( 'mail sent failed: ', xhr.responseText );
+			}
+		})
+		
+		var jQueryelem;
+		function show( msg ){
+			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>{MSG}</h1>";
+			
+			if( jQueryelem )
+				jQueryelem.remove();
+			
+			jQueryelem = jQuery(str.replace('{MSG}', msg));
+			jQuery('body').append(jQueryelem);
+			setTimeout( function(){
+				// console.log( 'remove jQueryelem' );
+				jQueryelem.remove();
+			}, 1000*3)
+		}
+		// console.log( 'email sent > ', jQuery('#text').find('h1').text() );
+		return;
+	})
 }
 </script>
 </head>
@@ -167,6 +223,9 @@ if (window.applicationCache){
 	}
 	if (hasLocalStorage) theme = localStorage['hackerweb:options:theme'] || theme;
 
+	// jx: 強迫用 ios theme
+	theme = 'ios-2';
+
 	var head = d.head || d.getElementsByTagName('head')[0];
 
 	var link = d.createElement('link');
@@ -178,9 +237,10 @@ if (window.applicationCache){
 	script.src = 'js/hw-' + theme + '.min.js';
 	head.insertBefore(script, head.lastChild);
 
-	if (typeof ga != 'undefined') setTimeout(function(){
-		ga('send', 'event', 'App', 'Theme', theme);
-	}, 2000);
+	// jx: 關掉 GA
+	// if (typeof ga != 'undefined') setTimeout(function(){
+	// 	ga('send', 'event', 'App', 'Theme', theme);
+	// }, 2000);
 })(document, navigator.userAgent);
 </script>
 </body>

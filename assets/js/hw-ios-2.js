@@ -1,4 +1,5 @@
 (function(w){
+
 	var d = w.document;
 	var body = d.body;
 

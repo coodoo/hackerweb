@@ -77,13 +77,14 @@
 	};
 
 	var urls = [
-		'//node-hnapi-eu.herokuapp.com/', // Heroku (EU)
-		'//node-hnapi.azurewebsites.net/', // Windows Azure (North EU)
-		'//node-hnapi-asia.azurewebsites.net/', // Windows Azure (East Asia)
-		'//node-hnapi-eus.azurewebsites.net/', // Windows Azure (East US)
-		'//node-hnapi-weu.azurewebsites.net/', // Windows Azure (West EU)
-		'//node-hnapi-wus.azurewebsites.net/', // Windows Azure (West US)
-		'//node-hnapi-ncus.azurewebsites.net/' // Windows Azure (North Central US)
+		'//node-hnapi.herokuapp.com/', // Heroku 美國的最快
+		'//node-hnapi-eu.herokuapp.com/', // Heroku (EU) 這個其次
+		// '//node-hnapi.azurewebsites.net/' // Windows Azure (North EU) 盡量避開 azure 的，超慢
+		// '//node-hnapi-asia.azurewebsites.net/', // Windows Azure (East Asia)
+		// '//node-hnapi-eus.azurewebsites.net/', // Windows Azure (East US)
+		// '//node-hnapi-weu.azurewebsites.net/', // Windows Azure (West EU)
+		// '//node-hnapi-wus.azurewebsites.net/', // Windows Azure (West US)
+		// '//node-hnapi-ncus.azurewebsites.net/' // Windows Azure (North Central US)
 	];
 	var shuffle = function(array){ // Fisher-Yates
 		for (var i = array.length - 1; i > 0; i--){
@@ -103,6 +104,8 @@
 		req(urls[i] + path, success, errorFunc);
 	};
 	var reqs = function(path, success, error){
+		console.log( '要拿資料 > path: ', path );
+		debugger;
 		req(urls[0] + path, success, function(){
 			reqAgain(0, path, success, error);
 		});

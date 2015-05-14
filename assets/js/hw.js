@@ -4,7 +4,6 @@
 	var $ = w.$ = function(id){
 		return d.getElementById(id);
 	};
-
 	var pubsubCache = {},
 		clone = function(obj){
 			var target = {};

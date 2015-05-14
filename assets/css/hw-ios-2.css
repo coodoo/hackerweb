@@ -559,7 +559,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 	margin: 0 auto;
 	padding: 0;
 	list-style: none;
-	max-width: 88ex;
+	max-width: 66ex;
 }
 .view section.comments ul li{
 	padding: 15px;
@@ -1100,7 +1100,7 @@ ol.grouped-tableview-links li>a.tappable-active{
 	}
 	#view-about.hidden{
 		-webkit-transform: translateY(175%);
-		transform: translateY(175%);
+		transform: translateY(190%);/* jx: desktop 版時，about 面板要藏低一點*/
 	}
 	#view-about>.scroll>section{
 		padding: 0 28px;
@@ -1130,4 +1130,21 @@ ol.grouped-tableview-links li>a.tappable-active{
 	#app-desc{
 		margin-left: 86px;
 	}
+}
+
+.header-button-right{
+	right:0;
+}
+
+.header-button{
+	cursor: pointer;
+	text-decoration: none;
+	position: absolute;
+	top: 0;
+	padding: 0 8px;
+	color: #007aff;
+	font-style: normal;
+	-webkit-transition: opacity .3s;
+	transition: opacity .3s;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
