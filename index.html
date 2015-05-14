@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html manifest="manifest.appcache">
+<html >
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -8,13 +8,19 @@
 
 <meta name="apple-mobile-web-app-title" content="HackerWeb">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="shortcut icon" href="icons/favicon.ico">
+<link rel="shortcut icon" sizes="196x196" href="icons/favicon-196.png">
+<link rel="shortcut icon" sizes="128x128" href="icons/favicon-128.png">
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/touch-icon-152.png">
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="icons/touch-icon-144.png">
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="icons/touch-icon-120.png">
 <link rel="apple-touch-icon-precomposed" sizes="114x114" href="icons/touch-icon-114.png">
+<link rel="apple-touch-icon-precomposed" sizes="76x76" href="icons/touch-icon-76.png">
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="icons/touch-icon-72.png">
-<link rel="apple-touch-icon-precomposed" href="icons/touch-icon.png">
-<script src="//d3nslu0hdya83q.cloudfront.net/dist/1.0/raven.min.js"></script>
+<link rel="apple-touch-icon-precomposed" href="icons/touch-icon-114.png">
+<style>body{ visibility: hidden; }</style>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script>
 
 jQuery(ready);
@@ -158,81 +164,132 @@ if (location.hostname == 'cheeaun.github.io' || location.hostname == 'cheeaun.gi
 		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	})();
 }
+</script>
+<script>
 
-(function(d, ua){
-	var hasLocalStorage = false;
-	try {
-		hasLocalStorage = !!localStorage.getItem;
-	} catch(e) {}
+jQuery(ready);
 
-	var theme = 'ios';	/* use ios theme even on desktop, I like it more that way so sue me.*/
-	if (ua && /iPhone|iPod|iPad/.test(ua) && parseInt((ua.match(/ OS (\d+)_/i) || [,0])[1], 10) >= 5){
-		theme = 'ios';
-	}
-	if (hasLocalStorage) theme = localStorage['hackerweb:options:theme'] || theme;
+function ready(){
+	var btnId;
+	var mo = new MutationObserver(function( record ){
+		clearTimeout( btnId );
+		// console.log('MO CHNAGE = ', record )
+		btnId = setTimeout( addSendButton, 500 );
+	});
+	
+	var config = { attributes: true, childList: true, characterData: true };
+	mo.observe( jQuery('#view-comments .scroll section')[0], config );
 
-	var head = d.head || d.getElementsByTagName('head')[0];
+	var $btnSend;
+	
+	// setTimeout(function(){
+	// 	addSendButton();
+	// }.bind(this), 500)
+	
+	function addSendButton(){
+		// if( window.innerWidth < 640 ) return;
+		
+		var str = '<div style="top:60px;"  class="header-button header-button-right send-button"><button style="width:80px;">SEND</button></div>';
+		
+		if( !$btnSend)
+			$btnSend = jQuery(str);
 
-	// Use document.write to prevent FOUC
-	d.write('<link rel="stylesheet" href="assets/css/hw-' + theme + '.css">');
+		var $header = jQuery('#view-comments .scroll section .post-content header');
+		$btnSend.appendTo( $header );
+		$btnSend.css('top', $header.find('p').offset().top + 14 );
 
-	var script = d.createElement('script');
-	script.src = 'js/hw-' + theme + '.min.js';
-	head.insertBefore(script, head.lastChild);
-
-	if (typeof _gaq != 'undefined') setTimeout(function(){
-		_gaq.push(['_trackEvent', 'App', 'Theme', theme]);
-	}, 2000);
-})(document, navigator.userAgent);
-
-if (window.applicationCache){
-	// "Naturally" reload when an update is available
-	var reload = false;
-	window.applicationCache.addEventListener('updateready', function(){
-		if (window.applicationCache.status == window.applicationCache.UPDATEREADY){
-			window.applicationCache.swapCache();
-			reload = true;
+		// phone 版
+		if( window.innerWidth < 640 ){
+			$btnSend.css('top', 60 );
 		}
-	}, false);
 
-	setInterval(function(){
-		try { // There's nothing to update for first-time load, browser freaks out :/
-			window.applicationCache.update();
-		} catch (e){}
-	}, 1000*60*60); // Every hour
+		var $header2 = jQuery('#view-comments > header');
+		// console.log( '$header2 有貨?', $header2.length );
+		jQuery(str).css('top', 0).appendTo( $header2 );
+		// $btnSend.css('top', $header.find('p').offset().top + 20 );
 
-	var checkReload = function(){
-		if (reload) location.reload();
-	};
-	window.addEventListener('pageshow', checkReload, false);
-	window.addEventListener('focus', checkReload, false);
 
-	// Use GA to track the update rate of this manifest appcache thing
-	// and see how fast users are updated to the latest cache/version
-	if (typeof _gaq != 'undefined') window.addEventListener('load', function(){
-		setTimeout(function(){
-			var r = new XMLHttpRequest();
-			r.open('GET', 'manifest.appcache', true);
-			r.onload = function(){
-				var text = this.responseText;
-				if (!text) return;
-				var version = (text.match(/#\s\d[^\n\r]+/) || [])[0];
-				if (version) _gaq.push(['_trackEvent', 'Appcache', 'Version', version.replace(/^#\s/, '')]);
-			};
-			r.send();
-		}, 1000);
-	}, false);
-} else {
-	setTimeout(function(){
-		_gaq.push(['_trackEvent', 'Appcache', 'Version', 'n/a']);
-	}, 1000);
+	}
+	jQuery('#view-comments').on( 'click', 'li', function(evt){
+		
+		if( evt.target.nodeName === "BUTTON" ) return;
+		evt.stopImmediatePropagation();
+		
+		// console.log( 'li click', evt );
+		var $elem = jQuery(evt.currentTarget.children[0]);
+		var style = 'background-color:rgba(243, 192, 35, 0.4);';
+		// var style = 'border: 1px dashed blue;';
+		var s = $elem.attr('style');
+		$elem.attr('style', (s == undefined || s == "") ? style : "");
+	})
+	// 寄信
+	jQuery('#view-comments').on('click', function(evt){
+
+		if( evt.target.parentElement.classList.contains('send-button') == false )
+			return;
+
+		evt.preventDefault();
+		var $header = jQuery(jQuery('.post-content header a')[0]);
+		var publisher = $header.find('span').text();
+		var title = jQuery('#view-comments > header h1').text();
+		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
+		show("SENDING");
+		// jx
+		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json', 
+		{
+			type:"POST", 
+			data:{
+	    	    "key": "fEgERIi_5Cb5YgnAh4pl0g",
+	    	    "message": {
+	    	        "html": content,
+	    	        "subject": title + '(' + publisher + ')',
+	    	        "from_email": "from_hackernews@twmug.com",
+	    	        "from_name": "from_hackernews",
+	    	        "to": [
+	    	            {
+	    	                "email": "jx@twmug.com",
+	    	                "type": "to"
+	    	            }
+	    	        ]
+	    	    },
+	    	    "async": false,
+	    	    "ip_pool": "Main Pool"
+	    	}, 
+			success:function(a,b,c){
+				
+				// console.log( 'mail sent: ', b );
+				show("SENT");
+			}.bind(this),
+			
+			error:function( xhr, status, errText ){
+				// console.log( 'mail sent failed: ', xhr.responseText );
+			}
+		})
+		
+		var jQueryelem;
+		function show( msg ){
+			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>{MSG}</h1>";
+			
+			if( jQueryelem )
+				jQueryelem.remove();
+			
+			jQueryelem = jQuery(str.replace('{MSG}', msg));
+			jQuery('body').append(jQueryelem);
+			setTimeout( function(){
+				// console.log( 'remove jQueryelem' );
+				jQueryelem.remove();
+			}, 1000*3)
+		}
+		// console.log( 'email sent > ', jQuery('#text').find('h1').text() );
+		return;
+	})
 }
 </script>
 </head>
 <body>
 <!--[if lt IE 9]>
 	<div id="outdated-browser">
-		<p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+		<p>You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 		<p><small>Else, just go to <a href="https://news.ycombinator.com/">Hacker News</a> web site instead.</small></p>
 	</div>
 <![endif]-->
@@ -249,11 +306,10 @@ if (window.applicationCache){
 		</section>
 	</div>
 </div>
-<div class="view hidden" id="view-comments">
+<div class="view hidden shaded" id="view-comments">
 	<header>
 		<a href="#/" class="header-button header-button-left header-back-button"><button>News</button></a>
-		<h1 style="margin: 0 65px;"></h1>
-		<div id="send-button" class="header-button header-button-right"><button>SEND</button></div>
+		<h1 style="margin: 0 75px;"></h1>
 	</header>
 	<div class="scroll">
 		<section>
@@ -261,7 +317,7 @@ if (window.applicationCache){
 
 	</div>
 </div>
-<div class="view hidden" id="view-about" style="display:none;">
+<div class="view hidden shaded" id="view-about">
 	<header>
 		<a href="#/" class="header-button header-button-left"><button>Close</button></a>
 		<h1>About</h1>
@@ -275,14 +331,56 @@ if (window.applicationCache){
 			<ul class="grouped-tableview grouped-tableview-links">
 				<li><a href="http://hackerwebapp.com/" target="_blank" class="disclosure">HackerWeb homepage</a></li>
 				<li><a href="https://news.ycombinator.com/" target="_blank" class="disclosure">Hacker News homepage</a></li>
-				<li><a href="http://ycombinator.com/newsfaq.html" target="_blank" class="disclosure">Hacker News FAQ</a></li>
+				<li><a href="https://news.ycombinator.com/newsfaq.html" target="_blank" class="disclosure">Hacker News FAQ</a></li>
 				<li><a href="https://github.com/cheeaun/hackerweb" target="_blank" class="disclosure">HackerWeb on GitHub</a></li>
 				<li><a href="https://twitter.com/cheeaun" target="_blank" class="disclosure">Follow @cheeaun</a></li>
+				<li><a href="https://gratipay.com/cheeaun/" target="_blank" class="disclosure">Gratipay @cheeaun</a></li>
 				<li><a href="mailto:cheeaun+hackerweb@gmail.com?subject=HackerWeb feedback" class="disclosure">Send Feedback</a></li>
 			</ul>
 			<p class="foot-label">Built by Lim Chee Aun.<br>Not affiliated with Hacker News or YCombinator.</p>
 		</section>
 	</div>
 </div>
+<script>
+(function(d, ua){
+	var hasLocalStorage = false;
+	try {
+		var testKey = '__hackerweb__test';
+		localStorage.setItem(testKey, testKey);
+		localStorage.removeItem(testKey);
+		hasLocalStorage = true;
+	} catch(e) {}
+
+	var theme = 'web';
+	if (ua && /iPhone|iPod|iPad/.test(ua)){
+		var version = parseInt((ua.match(/ OS (\d+)_/i) || [,0])[1], 10);
+		if (version >= 7){
+			theme = 'ios-2';
+		} else if (version >= 5){
+			theme = 'ios';
+		}
+	}
+	if (hasLocalStorage) theme = localStorage['hackerweb:options:theme'] || theme;
+
+	// jx: 強迫用 ios theme
+	theme = 'ios-2';
+
+	var head = d.head || d.getElementsByTagName('head')[0];
+
+	var link = d.createElement('link');
+	link.rel = 'stylesheet';
+	link.href = 'assets/css/hw-' + theme + '.css';
+	head.insertBefore(link, head.lastChild);
+
+	var script = d.createElement('script');
+	script.src = 'js/hw-' + theme + '.min.js';
+	head.insertBefore(script, head.lastChild);
+
+	// jx: 關掉 GA
+	// if (typeof ga != 'undefined') setTimeout(function(){
+	// 	ga('send', 'event', 'App', 'Theme', theme);
+	// }, 2000);
+})(document, navigator.userAgent);
+</script>
 </body>
 </html>

@@ -10,8 +10,8 @@
     // Browser global scope
     factory(root, window.document);
   }
-}(this, function(w, d){
 
+}(this, function(w, d){
   var abs = Math.abs,
     noop = function(){},
     defaults = {
@@ -30,7 +30,9 @@
       activeClassDelay: 0,
       inactiveClassDelay: 0
     },
-    supportTouch = 'ontouchend' in document,
+    // jx: 解決 desktop 上 mouse 事件不被處理的問題
+    supportTouch = window.ontouchstart,
+    // supportTouch = 'ontouchend' in document,
     events = {
       start: supportTouch ? 'touchstart' : 'mousedown',
       move: supportTouch ? 'touchmove' : 'mousemove',

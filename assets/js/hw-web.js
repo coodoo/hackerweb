@@ -6,10 +6,13 @@
 		scrollTops = {},
 		scrollTimeout,
 		getScrollTop = function(){
-			return w.pageYOffset || d.compatMode === 'CSS1Compat' && d.documentElement.scrollTop || body.scrollTop || 0;
+			return w.pageYOffset || d.compatMode === 'CSS1Compat' && d.documentElement.scrollTop || 0;
 		},
 		saveScrollTop = function(){
-			scrollTops[location.hash.slice(1)] = getScrollTop();
+			var hash = location.hash.slice(1);
+			var top = scrollTops[hash] = getScrollTop();
+			var key = 'hacker-scrolltop-' + hash;
+			amplify.store.sessionStorage(key, top);
 		};
 	w.addEventListener('scroll', function(){
 		// debouncing scrolls
@@ -19,8 +22,11 @@
 	ruto.config({
 		on: function(){
 			var hash = location.hash.slice(1);
-			w.scrollTo(0, scrollTops[hash] || 0);
-			scrollTops[hash] = getScrollTop();
+			var key = 'hacker-scrolltop-' + hash;
+			var top = amplify.store.sessionStorage(key);
+			w.scrollTo(0, scrollTops[hash] || top || 0);
+			top = scrollTops[hash] = getScrollTop();
+			amplify.store.sessionStorage(key, top);
 		}
 	});
 
@@ -28,14 +34,15 @@
 	// While waiting for viewport units to be more widely supported by modern browsers
 	var head = d.head || d.getElementsByTagName('head')[0];
 	var adjustViewsHeight = function(){
-		var vh = window.innerHeight;
+		var vh = w.innerHeight;
 		var style = $('view-height');
 		if (!style){
 			style = d.createElement('style');
 			style.id = 'view-height';
 			head.appendChild(style);
 		}
-		style.textContent = '.view>.scroll{min-height: ' + (vh*.85) + 'px}';
+		if (w.innerWidth >= 788) vh *= .9;
+		style.textContent = '.view>.scroll{min-height: ' + vh + 'px}';
 	};
 	w.addEventListener('resize', adjustViewsHeight, false);
 	w.addEventListener('orientationchange', adjustViewsHeight, false);
@@ -57,5 +64,18 @@
 
 	ibento('#view-comments .load-error button', 'click', hw.comments.reload);
 
-	hw.init();
+	if (/Mobile;.*Firefox/.test(navigator.userAgent) && navigator.mozApps){ // Firefox Mobile
+		var request = navigator.mozApps.getSelf(); // Check if installed on Firefox OS
+		request.onsuccess = function(){
+			if (request.result){
+				// Bind all external links to window.open which invokes a system-provided "browser" window
+				ibento('a[href]:not([href^="#"])', 'click', function(e, target){
+					e.preventDefault();
+					window.open(target.href, 'browser');
+				});
+			}
+		}
+	}
+
+	window.onload = hw.init;
 })(window);

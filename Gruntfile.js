@@ -3,9 +3,6 @@ module.exports = function(grunt) {
 	grunt.initConfig({
 		pkg: grunt.file.readJSON('package.json'),
 		uglify: {
-			options: {
-				report: 'min'
-			},
 			web: {
 				options: {
 					sourceMap: 'js/hw-web.min.js.map',
@@ -14,7 +11,8 @@ module.exports = function(grunt) {
 					},
 					sourceMapRoot: '../',
 					beautify: {
-						max_line_len: 500
+						max_line_len: 500,
+						screw_ie8: true
 					}
 				},
 				files: {
@@ -39,7 +37,8 @@ module.exports = function(grunt) {
 					},
 					sourceMapRoot: '../',
 					beautify: {
-						max_line_len: 500
+						max_line_len: 500,
+						screw_ie8: true
 					}
 				},
 				files: {
@@ -54,6 +53,33 @@ module.exports = function(grunt) {
 						'assets/js/templates.js',
 						'assets/js/hw.js',
 						'assets/js/hw-ios.js'
+					]
+				}
+			},
+			ios2: {
+				options: {
+					sourceMap: 'js/hw-ios-2.min.js.map',
+					sourceMappingURL: function(path){
+						return path.replace(/^js\//i, '') + '.map';
+					},
+					sourceMapRoot: '../',
+					beautify: {
+						max_line_len: 500,
+						screw_ie8: true
+					}
+				},
+				files: {
+					'js/hw-ios-2.min.js': [
+						'assets/js/libs/ruto.js',
+						'assets/js/libs/amplify.store.js',
+						'assets/js/libs/hogan.js',
+						'assets/js/libs/hnapi.js',
+						'assets/js/libs/tappable.js',
+						'assets/js/libs/tween.js',
+						'assets/js/libs/requestanimationframe.js',
+						'assets/js/templates.js',
+						'assets/js/hw.js',
+						'assets/js/hw-ios-2.js'
 					]
 				}
 			}
@@ -77,7 +103,8 @@ module.exports = function(grunt) {
 			scripts: {
 				files: [
 					'assets/js/libs/*.js',
-					'assets/js/*.js'
+					'assets/js/*.js',
+					'Gruntfile.js'
 				],
 				tasks: ['uglify']
 			},
@@ -94,31 +121,35 @@ module.exports = function(grunt) {
 		connect: {
 			server: {
 				options: {
-					port: 80,
+					port: process.env.HACKERWEB_PORT || 80,
 					keepalive: true,
-					hostname: null,
-					middleware: function(connect, options){
-						var appcache = grunt.option('appcache');
-						return [
-							function(req, res, next){
-								if (req.url == '/manifest.appcache' && !appcache){
-									res.writeHead(404);
-									res.end();
-								} else {
-									next();
-								}
-							},
-							connect.static(options.base),
-							connect.directory(options.base)
-						];
-					}
+					hostname: '*',
+					debug: true,
+					// middleware: function(connect, options){
+					// 	var appcache = grunt.option('appcache');
+					// 	grunt.log.writeln('Application Cache: ' + (appcache ? 'ON' : 'OFF'));
+					// 	return [
+					// 		function(req, res, next){
+					// 			if (req.url == '/manifest.appcache' && !appcache){
+					// 				res.writeHead(404);
+					// 				res.end();
+					// 			} else {
+					// 				next();
+					// 			}
+					// 		},
+					// 		connect.static(options.base),
+					// 		connect.directory(options.base)
+					// 	];
+					// }
 				}
 			}
 		},
 		concurrent: {
 			server: {
 				tasks: ['watch', 'connect'],
-				logConcurrentOutput: true
+				options: {
+					logConcurrentOutput: true
+				}
 			}
 		},
 		bumpAppCache: {
@@ -141,6 +172,9 @@ module.exports = function(grunt) {
 		},
 		shell: {
 			deploy: {
+				options: {
+					stdout: true
+				},
 				command: [
 					'git checkout gh-pages',
 					'git merge master',
