@@ -104,8 +104,6 @@
 		req(urls[i] + path, success, errorFunc);
 	};
 	var reqs = function(path, success, error){
-		console.log( '要拿資料 > path: ', path );
-		debugger;
 		req(urls[0] + path, success, function(){
 			reqAgain(0, path, success, error);
 		});
