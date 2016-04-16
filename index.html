@@ -19,6 +19,7 @@
 <link rel="apple-touch-icon-precomposed" href="icons/touch-icon-114.png">
 <style>body{ visibility: hidden; }</style>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="fetch.js"></script>
 <script>
 // WP8 Viewport fix: http://trentwalton.com/2013/01/16/windows-phone-8-viewport-fix/
 if (navigator.userAgent.match(/IEMobile\/10\.0/)){
@@ -98,24 +99,71 @@ function ready(){
 		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
 		show("SENDING");
 
+		// jxold: mandrill
+		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json',
+				{
+					type:"POST",
+					data:{
+			    	    "key": "fEgERIi_5Cb5YgnAh4pl0g",
+			    	    "message": {
+			    	        "html": content,
+			    	        "subject": title + '(' + publisher + ')',
+			    	        "from_email": "from_hackernews@twmug.com",
+			    	        "from_name": "from_hackernews",
+			    	        "to": [
+			    	            {
+			    	                "email": "jx@twmug.com",
+			    	                "type": "to"
+			    	            }
+			    	        ]
+			    	    },
+			    	    "async": false,
+			    	    "ip_pool": "Main Pool"
+			    	},
+					success:function(a,b,c){
 
-		jQuery.ajax('https://api.mailgun.net/v3/sandboxf4c7b1dcb4834313a180dadcfa666152.mailgun.org/messages',
+						// console.log( 'mail sent: ', b );
+						show("SENT");
+					}.bind(this),
+
+					error:function( xhr, status, errText ){
+						// console.log( 'mail sent failed: ', xhr.responseText );
+					}
+				})
+
+
+
+		/*jQuery.ajax('https://api.mailgun.net/v3/sandboxf4c7b1dcb4834313a180dadcfa666152.mailgun.org/messages',
 		{
-			type:"POST",
+			type:'post',
+
+			// dataType:'jsonp',
+			// jsonp:'onJSONPLoad',
+
 			username: 'api',
 			password: 'key-aaadb4599055a0b9443ac4a40200f905',
-			data:{
-				"html": content,
+
+			data:JSON.stringify({
+				// "html": content,
+				"html": '<h2>content</h2>',
 				"subject": title + '(' + publisher + ')',
 				"from": "<from_hackernews@twmug.com>",
 				"to": "<jx@twmug.com>"
-			},
+			}),
+
+			// data:{
+			// 	// "html": content,
+			// 	"html": '<h2>content</h2>',
+			// 	"subject": title + '(' + publisher + ')',
+			// 	"from": "<from_hackernews@twmug.com>",
+			// 	"to": "<jx@twmug.com>"
+			// },
 			success:function(a,b,c){
 				console.log( 'mail sent: ', b );
 				show("SENT");
 			}.bind(this),
 			error:function( xhr, status, errText ){console.log( 'mail sent failed: ', xhr.responseText );}
-		})
+		})*/
 
 		var jQueryelem;
 		function show( msg ){
