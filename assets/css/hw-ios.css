@@ -773,7 +773,8 @@ ol.grouped-tableview-links li>a.disclosure.tappable-active:after{
 
 .view section.comments{
 	min-height: 100%;
-	font-size: 18px;	/* jxchanged */
+	font-size: 1.3em;	/* jxchanged */
+	line-height: 1.4em;
 	line-height: 150%;
 	overflow: hidden;
 }
