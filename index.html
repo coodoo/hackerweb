@@ -38,22 +38,22 @@ function ready(){
 		// console.log('MO CHNAGE = ', record )
 		btnId = setTimeout( addSendButton, 500 );
 	});
-	
+
 	var config = { attributes: true, childList: true, characterData: true };
 	mo.observe( jQuery('#view-comments .scroll section')[0], config );
 
 
 	var $btnSend;
-	
+
 	// setTimeout(function(){
 	// 	addSendButton();
 	// }.bind(this), 500)
-	
+
 	function addSendButton(){
 		// if( window.innerWidth < 640 ) return;
-		
+
 		var str = '<div style="top:60px;"  class="header-button header-button-right send-button"><button style="width:80px;height:30px;">SEND</button></div>';
-		
+
 		if( !$btnSend)
 			$btnSend = jQuery(str);
 
@@ -74,10 +74,10 @@ function ready(){
 
 	}
 	jQuery('#view-comments').on( 'click', 'li', function(evt){
-		
+
 		if( evt.target.nodeName === "BUTTON" ) return;
 		evt.stopImmediatePropagation();
-		
+
 		// console.log( 'li click', evt );
 		var $elem = jQuery(evt.currentTarget.children[0]);
 		var style = 'background-color:rgba(243, 192, 35, 0.4);';
@@ -97,45 +97,33 @@ function ready(){
 		var title = jQuery('#view-comments > header h1').text();
 		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
 		show("SENDING");
-		// jx
-		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json', 
+
+
+		jQuery.ajax('https://api.mailgun.net/v3/sandboxf4c7b1dcb4834313a180dadcfa666152.mailgun.org/messages',
 		{
-			type:"POST", 
+			type:"POST",
+			username: 'api',
+			password: 'key-aaadb4599055a0b9443ac4a40200f905',
 			data:{
-	    	    "key": "fEgERIi_5Cb5YgnAh4pl0g",
-	    	    "message": {
-	    	        "html": content,
-	    	        "subject": title + '(' + publisher + ')',
-	    	        "from_email": "from_hackernews@twmug.com",
-	    	        "from_name": "from_hackernews",
-	    	        "to": [
-	    	            {
-	    	                "email": "jx@twmug.com",
-	    	                "type": "to"
-	    	            }
-	    	        ]
-	    	    },
-	    	    "async": false,
-	    	    "ip_pool": "Main Pool"
-	    	}, 
+				"html": content,
+				"subject": title + '(' + publisher + ')',
+				"from": "<from_hackernews@twmug.com>",
+				"to": "<jx@twmug.com>"
+			},
 			success:function(a,b,c){
-				
-				// console.log( 'mail sent: ', b );
+				console.log( 'mail sent: ', b );
 				show("SENT");
 			}.bind(this),
-			
-			error:function( xhr, status, errText ){
-				// console.log( 'mail sent failed: ', xhr.responseText );
-			}
+			error:function( xhr, status, errText ){console.log( 'mail sent failed: ', xhr.responseText );}
 		})
-		
+
 		var jQueryelem;
 		function show( msg ){
 			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>{MSG}</h1>";
-			
+
 			if( jQueryelem )
 				jQueryelem.remove();
-			
+
 			jQueryelem = jQuery(str.replace('{MSG}', msg));
 			jQuery('body').append(jQueryelem);
 			setTimeout( function(){
