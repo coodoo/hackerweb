@@ -100,7 +100,7 @@ function ready(){
 		show("SENDING");
 
 		// jxold: mandrill
-		jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json',
+		/*jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json',
 				{
 					type:"POST",
 					data:{
@@ -129,9 +129,30 @@ function ready(){
 					error:function( xhr, status, errText ){
 						// console.log( 'mail sent failed: ', xhr.responseText );
 					}
-				})
+				})*/
 
+		// 新版
+		fetch(
+			'http://localhost:3000/mmm',
 
+			{
+				method: 'POST',
+				headers: {
+				  'Accept': 'application/json',
+				  'Content-Type': 'application/json'
+				},
+				body:JSON.stringify({
+					"subject": title + '(' + publisher + ')',
+					"html": content,
+				}),
+			}
+		)
+		.then(function(res) {
+			console.log( '來1: ', res )
+		})
+		.catch(function(json) {
+			console.log( '來2: ', json )
+		});
 
 		/*jQuery.ajax('https://api.mailgun.net/v3/sandboxf4c7b1dcb4834313a180dadcfa666152.mailgun.org/messages',
 		{
@@ -144,8 +165,7 @@ function ready(){
 			password: 'key-aaadb4599055a0b9443ac4a40200f905',
 
 			data:JSON.stringify({
-				// "html": content,
-				"html": '<h2>content</h2>',
+				"html": content,
 				"subject": title + '(' + publisher + ')',
 				"from": "<from_hackernews@twmug.com>",
 				"to": "<jx@twmug.com>"
