@@ -775,6 +775,7 @@ ol.grouped-tableview-links li>a.disclosure.tappable-active:after{
 	min-height: 100%;
 	font-size: 1.3em;	/* jxchanged */
 	line-height: 1.4em;
+	color: red;
 	line-height: 150%;
 	overflow: hidden;
 }
