@@ -218,6 +218,7 @@ i.icon-loading{
 	height: 100%;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
+	overflow-x:hidden; /*jx: 防止 list 左右捲動*/
 }
 .view.shaded>.scroll{
 	background-color: #efeff4;
