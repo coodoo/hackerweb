@@ -1,3 +1,4 @@
+/*jx: 主要用這個*/
 @import url(http://fonts.googleapis.com/css?family=Inconsolata);
 
 html{
@@ -216,7 +217,7 @@ i.icon-loading{
 }
 .view>.scroll>section{ /* Double overflow-scrolling */
 	height: 100%;
-	overflow: auto;
+	/*overflow: auto;*/
 	-webkit-overflow-scrolling: touch;
 	overflow-x:hidden; /*jx: 防止 list 左右捲動*/
 }
@@ -554,9 +555,9 @@ ol.grouped-tableview-links li>a.tappable-active{
 	background-size: 1px 2px;
 	margin-bottom: 30px;
 }
-/* jxchanged ios 9 字體才不會太小 */
+/* jx: ios 9 字體才不會太小 */
 .view section.comments ul{
-	font-size: 1.3rem;
+	font-size: 1.2rem;
 	line-height: 1.4em;
 	margin: 0 auto;
 	padding: 0;
