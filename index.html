@@ -99,6 +99,7 @@ function ready(){
 		var content = '\n' + location.href + '\n\n' + jQuery('.comments').html();
 		show("SENDING");
 
+
 		// 新版用 mailgun
 		fetch(
 
@@ -117,10 +118,10 @@ function ready(){
 			}
 		)
 		.then(function(res) {
-			console.log( '來1: ', res )
+			// console.log( 'send result: ', res )
 		})
-		.catch(function(json) {
-			console.log( '來2: ', json )
+		.catch(function(err) {
+			console.log( 'send mail failed: ', err )
 		});
 
 		// 舊版: mandrill
