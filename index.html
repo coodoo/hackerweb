@@ -86,6 +86,7 @@ function ready(){
 		var s = $elem.attr('style');
 		$elem.attr('style', (s == undefined || s == "") ? style : "");
 	})
+
 	// 寄信
 	jQuery('#view-comments').on('click', function(evt){
 
@@ -103,7 +104,7 @@ function ready(){
 		// 新版用 mailgun
 		fetch(
 
-			'https://fullstackrocks.com/mmm', // 正式
+			'https://sin.riaworks.com/mmm', // 正式
 			// 'http://localhost:3001/mmm', // dev 用
 
 			{
@@ -119,52 +120,26 @@ function ready(){
 			}
 		)
 		.then(function(res) {
-			// console.log( 'send result: ', res )
+			var txt = res.statusText;
+			console.log( '寄信結果: ', res )
+
+			if( res.status !== 200 ){
+				show("✖ FAILED ✖\n" + txt, true);
+			}
 		})
 		.catch(function(err) {
+			show("✖ FAILED ✖");
 			console.log( 'send mail failed: ', err )
 		});
 
-		// 舊版: mandrill
-		/*jQuery.ajax('https://mandrillapp.com/api/1.0/messages/send.json',
-		{
-			type:"POST",
-			data:{
-	    	    "key": "fEgERIi_5Cb5YgnAh4pl0g",
-	    	    "message": {
-	    	        "html": content,
-	    	        "subject": title + '(' + publisher + ')',
-	    	        "from_email": "from_hackernews@twmug.com",
-	    	        "from_name": "from_hackernews",
-	    	        "to": [
-	    	            {
-	    	                "email": "jx@twmug.com",
-	    	                "type": "to"
-	    	            }
-	    	        ]
-	    	    },
-	    	    "async": false,
-	    	    "ip_pool": "Main Pool"
-	    	},
-			success:function(a,b,c){
-
-				// console.log( 'mail sent: ', b );
-				show("SENT");
-			}.bind(this),
-
-			error:function( xhr, status, errText ){
-				// console.log( 'mail sent failed: ', xhr.responseText );
-			}
-		})*/
-
 		var jQueryelem;
-		function show( msg ){
-			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:green; opacity:0.5;color:white;'>{MSG}</h1>";
+		function show( msg, isError=false ){
+			var str = "<h1 style='position:fixed; top:-10px; right: 10px; padding:10px; z-index:999; background-color:{COLOR}; opacity:0.5;color:white;'>{MSG}</h1>";
 
 			if( jQueryelem )
 				jQueryelem.remove();
 
-			jQueryelem = jQuery(str.replace('{MSG}', msg));
+			jQueryelem = jQuery( str.replace('{MSG}', msg).replace('{COLOR}', isError ? 'red' : 'green') );
 			jQuery('body').append(jQueryelem);
 			setTimeout( function(){
 				// console.log( 'remove jQueryelem' );
