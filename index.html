@@ -101,7 +101,7 @@ function ready(){
 		show("SENDING");
 
 
-		// 新版用 mailgun
+		// 新版用自已的 server 寄信
 		fetch(
 
 			'https://sin.riaworks.com/mmm', // 正式
@@ -129,6 +129,7 @@ function ready(){
 		})
 		.catch(function(err) {
 			show("✖ FAILED ✖");
+			console.log( 'args: ', arguments )
 			console.log( 'send mail failed: ', err )
 		});
 
