@@ -78,7 +78,7 @@
 
 	var urls = [
 		'//node-hnapi.azurewebsites.net/', // Windows Azure 盡量避開 azure 的，超慢
-		// '//node-hnapi-eu.herokuapp.com/', // Heroku (EU) 這個其次
+		// '//node-hnapi-eu.herokuapp.com/', // Heroku (EU) 這個其次 2
 		// '//node-hnapi.herokuapp.com/' // Heroku 美國的最快
 		// '//node-hnapi-asia.azurewebsites.net/', // Windows Azure (East Asia)
 		// '//node-hnapi-eus.azurewebsites.net/', // Windows Azure (East US)
