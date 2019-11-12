@@ -121,13 +121,13 @@ function ready(){
 			}
 		)
 		.then(function(res) {
-			var txt = res.statusText;
-			console.log( '寄信結果: ', res )
-
 			if( res.status !== 200 ){
 				show("✖ FAILED ✖\n" + txt, true);
 			}
+			
+			return res.json()
 		})
+		.then(res => console.log( '寄信結果: ', res ))
 		.catch(function(err) {
 			show("✖ FAILED ✖");
 			console.log( 'args: ', arguments )
