@@ -122,9 +122,12 @@ function ready(){
 		)
 		.then(res => res.json())
 		.then(res => {
-			console.log( '寄信結果: ', res )
+			console.log( '寄信結果: ', res, res.info, res.error )
+			if(res.error){
+				show("✖ FAILED ✖\n", true);
+			}
 			if( res.info.response.startsWith('250 2.0.0 OK') == false ){
-				show("✖ FAILED ✖\n" + res.info.response, true);
+				console.log("✖ FAILED ✖\n" + res.info.response);
 			}
 			
 		})
