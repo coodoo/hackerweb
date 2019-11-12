@@ -120,14 +120,13 @@ function ready(){
 				}),
 			}
 		)
-		.then(function(res) {
-			if( res.status !== 200 ){
-				show("✖ FAILED ✖\n" + txt, true);
+		.then(res => res.json())
+		.then(res => {
+			if( res.response.startsWith('250 2.0.0 OK') == false ){
+				show("✖ FAILED ✖\n" + res.response, true);
 			}
-			
-			return res.json()
+			console.log( '寄信結果: ', res )
 		})
-		.then(res => console.log( '寄信結果: ', res ))
 		.catch(function(err) {
 			show("✖ FAILED ✖");
 			console.log( 'args: ', arguments )
