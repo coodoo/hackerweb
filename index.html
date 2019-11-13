@@ -126,7 +126,7 @@ function ready(){
 			if(res.error){
 				show("❌ FAILED ❌", true);
 			}else {
-				show("✅ OK ✅", true);
+				show("✅ OK ✅");
 			}
 			
 			
@@ -134,7 +134,7 @@ function ready(){
 		.catch(function(err) {
 			show("❌ FAILED ❌");
 			console.log( 'args: ', arguments )
-			console.log( 'send mail failed: ', err )
+			console.log( '寄信的網路通訊失敗: ', err )
 		});
 
 		var jQueryelem;
