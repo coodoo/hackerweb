@@ -122,17 +122,17 @@ function ready(){
 		)
 		.then(res => res.json())
 		.then(res => {
-			console.log( '寄信結果: ', res, res.info, res.error )
+			console.log( '寄信結果: ', res.result, res.error )
 			if(res.error){
-				show("✖ FAILED ✖\n", true);
+				show("❌ FAILED ❌", true);
+			}else {
+				show("✅ OK ✅", true);
 			}
-			if( res.info.response.startsWith('250 2.0.0 OK') == false ){
-				console.log("✖ FAILED ✖\n" + res.info.response);
-			}
+			
 			
 		})
 		.catch(function(err) {
-			show("✖ FAILED ✖");
+			show("❌ FAILED ❌");
 			console.log( 'args: ', arguments )
 			console.log( 'send mail failed: ', err )
 		});
